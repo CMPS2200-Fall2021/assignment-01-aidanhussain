@@ -38,27 +38,35 @@ class Result:
         return('longest_size=%d left_size=%d right_size=%d is_entire_range=%s' %
               (self.longest_size, self.left_size, self.right_size, self.is_entire_range))
 
-    
+
 def longest_run_recursive(mylist, key):
     ### TODO
-    mid = len(mylist)/2
     
+    mid = int(len(mylist)/2)
+
     if len(mylist) == 1:
+
         if mylist[0] == key:
             return Result(1,1,1,True)
         else:
             return Result(0,0,0,False)
     
     else:
-        left = longest_run_recursive(mylist[0,mid], key)
-        right = longest_run_recursive(mylist[mid+1: len(mylist)-1], key)
+
+        left = longest_run_recursive(mylist[0:mid], key)
+
+        right = longest_run_recursive(mylist[mid: len(mylist)], key)
         
         if left.is_entire_range and right.is_entire_range:
-            return Result(left.longest_size+right.longest_size,left.longest_size+right.longest_size,left.longest_size+right.longest_size,True)
+            fr = Result(left.left_size + right.right_size,left.left_size+right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),True) 
         elif left.is_entire_range:
-            return Result(left.longest_size,0,max(left.longest_size,right.longest_size),False)
+            fr = Result(left.left_size + right.left_size,right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
         elif right.is_entire_range:
-            return Result(0,right.longest_size,max(left.longest_size,right.longest_size),False)  
+            fr = Result(left.left_size, left.right_size + right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
+        else:
+            fr = Result(left.left_size,right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
+            
+        return fr
 
 ## Feel free to add your own tests here.
 def test_longest_run():
