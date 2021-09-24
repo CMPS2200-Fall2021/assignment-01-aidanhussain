@@ -6,11 +6,24 @@ See assignment-01.pdf for details.
 
 def foo(x):
     ### TODO
-    pass
+    if x <= 1:
+        return x
+    else:
+        return foo(x-1) + foo(x-2)
 
 def longest_run(mylist, key):
     ### TODO
-    pass
+    count = 0
+    longest = 0
+    for e in mylist:
+        if e == key:
+            count += 1
+            if count > longest:
+                longest = count
+        else:
+            count = 0
+            
+    return longest
 
 
 class Result:
@@ -24,14 +37,41 @@ class Result:
     def __repr__(self):
         return('longest_size=%d left_size=%d right_size=%d is_entire_range=%s' %
               (self.longest_size, self.left_size, self.right_size, self.is_entire_range))
-    
-    
+
+
 def longest_run_recursive(mylist, key):
     ### TODO
-    pass
+    
+    mid = int(len(mylist)/2)
+
+    if len(mylist) == 1:
+
+        if mylist[0] == key:
+            return Result(1,1,1,True)
+        else:
+            return Result(0,0,0,False)
+    
+    else:
+
+        left = longest_run_recursive(mylist[0:mid], key)
+
+        right = longest_run_recursive(mylist[mid: len(mylist)], key)
+        
+        if left.is_entire_range and right.is_entire_range:
+            fr = Result(left.left_size + right.right_size,left.left_size+right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),True) 
+        elif left.is_entire_range:
+            fr = Result(left.left_size + right.left_size,right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
+        elif right.is_entire_range:
+            fr = Result(left.left_size, left.right_size + right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
+        else:
+            fr = Result(left.left_size,right.right_size,max(left.right_size+right.left_size,left.longest_size,right.longest_size),False) 
+            
+        return fr
 
 ## Feel free to add your own tests here.
 def test_longest_run():
     assert longest_run([2,12,12,8,12,12,12,0,12,1], 12) == 3
+    assert longest_run([12], 12) == 1
+
 
 
